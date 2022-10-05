@@ -1,7 +1,6 @@
 # Jeu du Yams
 
 import random
-from turtle import pos
 
 #Personnalisation
 class Bcolors:
@@ -39,13 +38,10 @@ class Dice():
 #Lancement des dés
 class Dices():
     dices = []
-    count = 0
-
-    new_start = None
 
     #Dés aléatoires
     def __init__(self):
-        for i in range(1, 6):
+        for i in range(0, 5):
             self.dices.append(Dice())
     
     #Valeurs des dés
@@ -95,6 +91,8 @@ class Score():
             if (equal_numbers == 5):
                 return i
 
+        return False
+
     #Combinaison : pour chaque chiffre
     def count_number(self, dices, number):
         counter = 0
@@ -113,7 +111,9 @@ class Score():
         for i in range(1, 7):
             equal_numbers = dices_value.count(i)
             if (equal_numbers >= 3):
-                return i              
+                return i
+
+        return False      
 
     #Combinaison : CARRE (4 même chiffre)
     def carre( self, dices ):
@@ -122,51 +122,54 @@ class Score():
         for i in range(1, 7):
             equal_numbers = dices_value.count(i)
             if (equal_numbers >= 4):
-                return i              
+                return i 
+
+        return False       
  
     #Combinaison : FULL (3 même chiffre + 2 autres même chiffre = BRELAN + PAIR) 
     def full( self, dices ):
-        is_brelan = False
-        is_pair = False
+        brelan = False
+        pair = False
 
         dices_value = self.dices_values_to_array(dices)
 
         for i in range(1, 7):
             equal_numbers = dices_value.count(i)
             if (equal_numbers >= 3):
-                is_brelan = True 
+                brelan = True 
             elif (equal_numbers >= 2):
-                is_pair = True
+                pair = True
 
-        if (is_brelan and is_pair):
-            return True      
+        if (brelan == True and pair == True):
+            return True
+
+        return False  
 
     #Combinaison : GRANDE SUITE (12345 ou 23456)
     def highest_suite( self, dices ):
         
-        dices_value = self.__sort_array_dices(dices)
-        print(dices_value)
+        dices_value = self.dices_values_to_array(dices)
  
         if(dices_value == [1, 2, 3, 4, 5] or dices_value == [2, 3, 4, 5, 6]):
             return True
 
+        return False
+
     #Combinaison : PETITE SUITE (1234 ou 2345 ou 3456)
     def little_suite( self, dices ):
 
-        dices_value = self.__sort_array_dices(dices)
+        dices_value = self.dices_values_to_array(dices)
 
         if(dices_value == [1, 2, 3, 4] or dices_value == [2, 3, 4, 5] or dices_value == [3, 4, 5, 6]):
             return True
 
+        return False
+
     def dices_values_to_array(self, dices):
         dices_value = []
-        for i in range(0, 5):
+        for i in range(1, 6):
             dices_value.append(dices[i].value)
         return dices_value
-    
-    def __sort_array_dices(self, dices):
-        dices_values = self.dices_values_to_array(dices)
-        return dices_values.sort()
 
 # Game /
 class Game():
@@ -181,11 +184,11 @@ class Game():
         print("------------------------------")
         print(Bcolors.WARNING + "     Le *Yams* commence !     " + Bcolors.ENDC)
         print("------------------------------")
-        print("------------------------------")
 
 
     #Gestion des rounds
     def round(self):
+            print("------------------------------")
             print(Bcolors.OKCYAN + "New Round :" + Bcolors.ENDC)
             print("------------------------------")
             response = input(Bcolors.HEADER + "Voulez vous lancer les dés ? " + Bcolors.ENDC)
@@ -218,10 +221,14 @@ class Game():
         response = input(Bcolors.HEADER + "Voulez-vous relancer les dés ? oui ? non ? tous les dés ? ==> " + Bcolors.ENDC)
         if "non" in response:
             print("------------------------------")
-            self.possibilities = self.__get_possibilities()
-            self.show_possibilities(self.possibilities)
+            possibilities = self.__get_possibilities()
+            self.show_possibilities(possibilities)
             self.show_combinations(self.score.combinations)
+            print("------------------------------")
             choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+            if (self.score.combinations[choixCombinaison] == None):
+                self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
             print("------------------------------")
             g.round()
 
@@ -235,13 +242,17 @@ class Game():
             print("------------------------------")
             print(Bcolors.FAIL + "Essai restant : 1" + Bcolors.ENDC)
             print("------------------------------")
-            response = input(Bcolors.HEADER + "Voulez-vous relancer les dés ? " + Bcolors.ENDC)
+            response = input(Bcolors.HEADER + "Voulez-vous relancer les dés ? oui ? non ? tous les dés ? ==> " + Bcolors.ENDC)
             if "non" in response:
                 print("------------------------------")
-                self.possibilities = self.__get_possibilities()
-                self.show_possibilities(self.possibilities)
+                possibilities = self.__get_possibilities()
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
+                print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                if (self.score.combinations[choixCombinaison] == None):
+                    self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
                 g.round()
                 print("------------------------------")
                 g.round()
@@ -254,10 +265,29 @@ class Game():
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
-                self.possibilities = self.__get_possibilities()
-                self.show_possibilities(self.possibilities)
+                possibilities = self.__get_possibilities()
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
+                print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                if (self.score.combinations[choixCombinaison] == None):
+                    self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
+                g.round()
+            if "tous les dés" in response:
+                g.dices.roll_all()
+                print("------------------------------")
+                print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
+                print("------------------------------")
+                possibilities = self.__get_possibilities()
+                self.show_possibilities(possibilities)
+                self.show_combinations(self.score.combinations)
+                print("------------------------------")
+                choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                if (self.score.combinations[choixCombinaison] == None):
+                    self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
+                print("------------------------------")
                 g.round()
 
 
@@ -266,13 +296,17 @@ class Game():
             print("------------------------------")
             print(Bcolors.FAIL + "Essai restant : 1" + Bcolors.ENDC)
             print("------------------------------")
-            response = input(Bcolors.HEADER + "Voulez-vous relancer les dés ? " + Bcolors.ENDC)
+            response = input(Bcolors.HEADER + "Voulez-vous relancer les dés ? oui ? non ? tous les dés ? ==> " + Bcolors.ENDC)
             if "non" in response:
                 print("------------------------------")
-                self.possibilities = self.__get_possibilities()
-                self.show_possibilities(self.possibilities)
+                possibilities = self.__get_possibilities()
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
+                print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                if (self.score.combinations[choixCombinaison] == None):
+                    self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
                 g.round()
                 print("------------------------------")
                 g.round()
@@ -285,24 +319,36 @@ class Game():
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
-                self.possibilities = self.__get_possibilities()
-                self.show_possibilities(self.possibilities)
+                possibilities = self.__get_possibilities()
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
+                print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                if (self.score.combinations[choixCombinaison] == None):
+                    self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
                 g.round()
             if "tous les dés" in response:
                 g.dices.roll_all()
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
-                self.possibilities = self.__get_possibilities()
-                self.show_possibilities(self.possibilities)
+                possibilities = self.__get_possibilities()
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
+                print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                if (self.score.combinations[choixCombinaison] == None):
+                    self.__set_scores(choixCombinaison)
+                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
                 print("------------------------------")
                 g.round()
 
-        self.__set_scores(choixCombinaison)
+        if response != "oui" or "non" or "tous les dés":
+                print("------------------------------")
+                print(Bcolors.FAIL + "Erreur ! Veuillez entrer oui / non ou tous les dés" + Bcolors.ENDC)
+                return(g.game_continue())
+
 
     #Présenter les différentes possibilités
     def show_possibilities(self, possibilities):
@@ -311,9 +357,9 @@ class Game():
     #Présenter les différentes combinaisons possibles
     def show_combinations(self, combinations):
         for line in combinations:
-            print (Bcolors.WARNING + '--------------------' + Bcolors.ENDC)
+            print ('------------------------------')
             if (combinations[line] == None):
-                print(Bcolors.WARNING + '|' + line + '|   ' + Bcolors.ENDC)
+                print(Bcolors.OKGREEN + '|' + line + '|   ' + Bcolors.ENDC)
             else:
                 print(Bcolors.WARNING + '|' + line + '| ' + str(combinations[line]) + Bcolors.ENDC)
 
@@ -325,23 +371,28 @@ class Game():
         if (self.score.combinations["chance"] == None):
             possibilities.append('chance')
 
+        if (self.score.combinations["one"] == None):
+            possibilities.append('one')
+
+        if (self.score.combinations["two"] == None):
+            possibilities.append('two')
+
+        if (self.score.combinations["three"] == None):
+            possibilities.append('three')
+
+        if (self.score.combinations["four"] == None):
+            possibilities.append('four')
+
+        if (self.score.combinations["five"] == None):
+            possibilities.append('five')
+
+        if (self.score.combinations["six"] == None):
+            possibilities.append('six')
+        
         yams = self.score.yams( self.dices.dices )
         if (yams > 0 and yams < 7):
             if (self.score.combinations["yams"] == None):
                 possibilities.append('yams')
-
-        if (self.score.combinations["one"] == None):
-            possibilities.append('one')
-        if (self.score.combinations["two"] == None):
-            possibilities.append('two')
-        if (self.score.combinations["three"] == None):
-            possibilities.append('three')
-        if (self.score.combinations["four"] == None):
-            possibilities.append('four')
-        if (self.score.combinations["five"] == None):
-            possibilities.append('five')
-        if (self.score.combinations["six"] == None):
-            possibilities.append('six')
 
         brelan = self.score.brelan( self.dices.dices )
         if (brelan != False):
@@ -373,36 +424,49 @@ class Game():
         return possibilities
 
     def __set_scores(self, choixCombinaison):
+
         if (choixCombinaison == "one"):
             count = self.score.count_number(self.dices.dices, 1)
             self.score.combinations[choixCombinaison] = count
+
         elif (choixCombinaison == "two"):
             count = self.score.count_number(self.dices.dices, 2)
             self.score.combinations[choixCombinaison] = count
+
         elif (choixCombinaison == "three"):
             count = self.score.count_number(self.dices.dices, 3)
             self.score.combinations[choixCombinaison] = count
+
         elif (choixCombinaison == "four"):
             count = self.score.count_number(self.dices.dices, 4)
             self.score.combinations[choixCombinaison] = count
+
         elif (choixCombinaison == "five"):
             count = self.score.count_number(self.dices.dices, 5)
             self.score.combinations[choixCombinaison] = count
+
         elif (choixCombinaison == "six"):
             count = self.score.count_number(self.dices.dices, 6)
             self.score.combinations[choixCombinaison] = count
+
         elif (choixCombinaison == "brelan"):
-            self.score.combinations[choixCombinaison] = self.score.brelan(self.dices)
+            self.score.combinations[choixCombinaison] = self.score.brelan(self.dices.dices)
+
         elif (choixCombinaison == "carre"):
-            self.score.combinations[choixCombinaison] = self.score.carre(self.dices)
+            self.score.combinations[choixCombinaison] = self.score.carre(self.dices.dices)
+
         elif (choixCombinaison == "full"):
             self.score.combinations[choixCombinaison] = 25
+
         elif (choixCombinaison == "little_suite"):
             self.score.combinations[choixCombinaison] = 30
+
         elif (choixCombinaison == "highest_suite"):
             self.score.combinations[choixCombinaison] = 40
+
         elif (choixCombinaison == "yams"):
             self.score.combinations[choixCombinaison] = 50
+            
         elif (choixCombinaison == "chance"):
             self.score.combinations[choixCombinaison] = sum(self.score.dices_values_to_array(self.dices.dices))
 
