@@ -67,7 +67,7 @@ class Score():
 
     #Liste des combinaisons
     combinations = {
-        "one" : None,
+        "as" : None,
         "two" : None,
         "three" : None,
         "four" : None,
@@ -160,7 +160,7 @@ class Score():
 
         dices_value = self.dices_values_to_array(dices)
 
-        if(dices_value == [1, 2, 3, 4] or dices_value == [2, 3, 4, 5] or dices_value == [3, 4, 5, 6]):
+        if(dices_value == [1, 2, 3, 4] or dices_value == [2, 3, 4, 5] or dices_value == [3, 4, 5 ,6]):
             return True
 
         return False
@@ -184,37 +184,51 @@ class Game():
         print("------------------------------")
         print(Bcolors.WARNING + "     Le *Yams* commence !     " + Bcolors.ENDC)
         print("------------------------------")
+        self.round()
 
+    nbRound = 0
 
     #Gestion des rounds
     def round(self):
+            self.nbRound += 1
+            while self.nbRound < 2:
+                print("------------------------------")
+                print(Bcolors.OKCYAN + "Round n° " + str(self.nbRound) + Bcolors.ENDC)
+                print("------------------------------")
+                self.load()
+            print(Bcolors.FAIL + "Fin du jeu ! " + Bcolors.ENDC)
+
+            for result in self.score.combinations.values():
+                sum(result)
+                
+            exit()
+
+
+    #Commencement de la partie
+    def load(self):
+        response = input(Bcolors.HEADER + "Voulez vous lancer les dés ? " + Bcolors.ENDC)
+
+        if "oui" in response:
             print("------------------------------")
-            print(Bcolors.OKCYAN + "New Round :" + Bcolors.ENDC)
+            print(Bcolors.UNDERLINE + "Voici les dés lancés :" + Bcolors.ENDC)
+            self.dices.roll_all()
             print("------------------------------")
-            response = input(Bcolors.HEADER + "Voulez vous lancer les dés ? " + Bcolors.ENDC)
+            print(Bcolors.FAIL + "Essai restant : 2" + Bcolors.ENDC)
+            self.game_continue()
+        
+        if "non" in response:
+            print("------------------------------")
+            self.game_restart()
+            exit()
 
-    
-            if "oui" in response:
-                print("------------------------------")
-                print(Bcolors.UNDERLINE + "Voici les dés lancés :" + Bcolors.ENDC)
-                g.dices.roll_all()
-                print("------------------------------")
-                print(Bcolors.FAIL + "Essai restant : 2" + Bcolors.ENDC)
-                g.game_continue()
+        
+        if response != "oui" or "non":
+            print("------------------------------")
+            print(Bcolors.FAIL + "Erreur ! Veuillez entrer oui ou non " + Bcolors.ENDC)
+            print("------------------------------")
+            return(self.round())
 
-            
-            elif "non" in response:
-                print("------------------------------")
-                g.game_end()
-                exit()
 
-            
-            elif response != "oui" or "non":
-                print("------------------------------")
-                print(Bcolors.FAIL + "Erreur ! Veuillez entrer oui ou non " + Bcolors.ENDC)
-                print("------------------------------")
-                return(g.round())
-    
     #Déroulé de la partie
     def game_continue(self):
         print("------------------------------")
@@ -226,11 +240,10 @@ class Game():
             self.show_combinations(self.score.combinations)
             print("------------------------------")
             choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-            if (self.score.combinations[choixCombinaison] == None):
-                self.__set_scores(choixCombinaison)
-                print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
+            self.possibilities_set_score(choixCombinaison)
+            print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
             print("------------------------------")
-            g.round()
+            self.round()
 
 
         if "oui" in response:
@@ -238,7 +251,7 @@ class Game():
             dices_question = input(Bcolors.HEADER + "Quel(s) dé(s) voulez-vous relancer ? (1/2/3/4/5) ==> " + Bcolors.ENDC)
             print("------------------------------")
             print(Bcolors.UNDERLINE +"Résultat des dés : " + Bcolors.ENDC)
-            g.dices.roll_selected_dices(str(dices_question))
+            self.dices.roll_selected_dices(str(dices_question))
             print("------------------------------")
             print(Bcolors.FAIL + "Essai restant : 1" + Bcolors.ENDC)
             print("------------------------------")
@@ -250,18 +263,16 @@ class Game():
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-                if (self.score.combinations[choixCombinaison] == None):
-                    self.__set_scores(choixCombinaison)
+                self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
-                g.round()
                 print("------------------------------")
-                g.round()
+                self.round()
             if "oui" in response:
                 print("------------------------------")
                 dices_question = input(Bcolors.HEADER + "Quel(s) dé(s) voulez-vous relancer ? (1/2/3/4/5) => " + Bcolors.ENDC)
                 print("------------------------------")
                 print(Bcolors.UNDERLINE + "Résultat des dés : " + Bcolors.ENDC)
-                g.dices.roll_selected_dices(str(dices_question))
+                self.dices.roll_selected_dices(str(dices_question))
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
@@ -270,12 +281,11 @@ class Game():
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-                if (self.score.combinations[choixCombinaison] == None):
-                    self.__set_scores(choixCombinaison)
+                self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
-                g.round()
+                self.round()
             if "tous les dés" in response:
-                g.dices.roll_all()
+                self.dices.roll_all()
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
@@ -284,15 +294,14 @@ class Game():
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-                if (self.score.combinations[choixCombinaison] == None):
-                    self.__set_scores(choixCombinaison)
+                self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
                 print("------------------------------")
-                g.round()
+                self.round()
 
 
         if "tous les dés" in response:
-            g.dices.roll_all()
+            self.dices.roll_all()
             print("------------------------------")
             print(Bcolors.FAIL + "Essai restant : 1" + Bcolors.ENDC)
             print("------------------------------")
@@ -304,18 +313,17 @@ class Game():
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-                if (self.score.combinations[choixCombinaison] == None):
-                    self.__set_scores(choixCombinaison)
+                self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
-                g.round()
+                self.round()
                 print("------------------------------")
-                g.round()
+                self.round()
             if "oui" in response:
                 print("------------------------------")
                 dices_question = input(Bcolors.HEADER + "Quel(s) dé(s) voulez-vous relancer ? (1/2/3/4/5) => " + Bcolors.ENDC)
                 print("------------------------------")
                 print(Bcolors.UNDERLINE + "Résultat des dés : " + Bcolors.ENDC)
-                g.dices.roll_selected_dices(str(dices_question))
+                self.dices.roll_selected_dices(str(dices_question))
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
@@ -324,12 +332,11 @@ class Game():
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-                if (self.score.combinations[choixCombinaison] == None):
-                    self.__set_scores(choixCombinaison)
+                self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
-                g.round()
+                self.round()
             if "tous les dés" in response:
-                g.dices.roll_all()
+                self.dices.roll_all()
                 print("------------------------------")
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
@@ -338,16 +345,16 @@ class Game():
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
-                if (self.score.combinations[choixCombinaison] == None):
-                    self.__set_scores(choixCombinaison)
+                self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
                 print("------------------------------")
-                g.round()
+                print("------------------------------")
+                self.round()
 
         if response != "oui" or "non" or "tous les dés":
                 print("------------------------------")
                 print(Bcolors.FAIL + "Erreur ! Veuillez entrer oui / non ou tous les dés" + Bcolors.ENDC)
-                return(g.game_continue())
+                return(self.game_continue())
 
 
     #Présenter les différentes possibilités
@@ -363,7 +370,6 @@ class Game():
             else:
                 print(Bcolors.WARNING + '|' + line + '| ' + str(combinations[line]) + Bcolors.ENDC)
 
-
     #Gestion des possibilités pour les combinaisons
     def __get_possibilities(self):
         possibilities = []
@@ -371,8 +377,8 @@ class Game():
         if (self.score.combinations["chance"] == None):
             possibilities.append('chance')
 
-        if (self.score.combinations["one"] == None):
-            possibilities.append('one')
+        if (self.score.combinations["as"] == None):
+            possibilities.append('as')
 
         if (self.score.combinations["two"] == None):
             possibilities.append('two')
@@ -423,9 +429,10 @@ class Game():
         
         return possibilities
 
+    #Gestion des scores pour chaque combinaison
     def __set_scores(self, choixCombinaison):
 
-        if (choixCombinaison == "one"):
+        if (choixCombinaison == "as"):
             count = self.score.count_number(self.dices.dices, 1)
             self.score.combinations[choixCombinaison] = count
 
@@ -450,10 +457,10 @@ class Game():
             self.score.combinations[choixCombinaison] = count
 
         elif (choixCombinaison == "brelan"):
-            self.score.combinations[choixCombinaison] = self.score.brelan(self.dices.dices)
+            self.score.combinations[choixCombinaison] = self.score.brelan(self.dices.dices)*3
 
         elif (choixCombinaison == "carre"):
-            self.score.combinations[choixCombinaison] = self.score.carre(self.dices.dices)
+            self.score.combinations[choixCombinaison] = self.score.carre(self.dices.dices)*4
 
         elif (choixCombinaison == "full"):
             self.score.combinations[choixCombinaison] = 25
@@ -469,29 +476,46 @@ class Game():
             
         elif (choixCombinaison == "chance"):
             self.score.combinations[choixCombinaison] = sum(self.score.dices_values_to_array(self.dices.dices))
+        
+
+    #Possibilité ou non d'inscire un score si case vide ou non
+    def possibilities_set_score(self, choixCombinaison):
+        if (self.score.combinations[choixCombinaison] == None):
+                self.__set_scores(choixCombinaison)
+        elif (self.score.combinations[choixCombinaison] != None):
+                print(Bcolors.FAIL + "Erreur : vous avez déjà choisi cette option, veuillez réessayer ! Ou choisissez une case à sacrifier !" + Bcolors.ENDC)
+                print("------------------------------")
+                choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
+                self.__set_scores(choixCombinaison)
+                self.round()
+        
 
     #Relancer une partie
     def game_restart(self):
         response = input(Bcolors.OKBLUE + "Voulez-vous relancer une partie ? " + Bcolors.ENDC)
         if "oui" in response:
-            g.game_start()
+            self.game_start()
+        if "non" in response:
+            self.game_end()
 
 
     #Terminer une partie
     def game_end(self):
+        print("------------------------------")
         response = input(Bcolors.OKBLUE + "Quitter le jeu ? " + Bcolors.ENDC)
         if "oui" in response:
             print("------------------------------")
-            print(Bcolors.FAIL + Bcolors.BOLD + "Fin du jeu !" + Bcolors.ENDC)
-            exit()   
+            print(Bcolors.FAIL + Bcolors.BOLD + "A bientôt !" + Bcolors.ENDC)
+            exit()
+        if "non" in response:
+            print("------------------------------")
+            self.game_restart()
 
 
 g = Game()
 s = Score()
 g.game_start()
-g.round()
-g.game_continue()
-g.game_end()
+
 
 
 
