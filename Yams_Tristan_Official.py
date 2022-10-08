@@ -80,7 +80,7 @@ class Score():
         "highest_suite" : None,
         "yams" : None,
         "chance" : None
-    }  
+    }
 
     #Combinaison : YAMS (5 même chiffre)
     def yams( self, dices ):
@@ -191,16 +191,15 @@ class Game():
     #Gestion des rounds
     def round(self):
             self.nbRound += 1
-            while self.nbRound < 2:
+            while self.nbRound < 7:
                 print("------------------------------")
                 print(Bcolors.OKCYAN + "Round n° " + str(self.nbRound) + Bcolors.ENDC)
                 print("------------------------------")
                 self.load()
             print(Bcolors.FAIL + "Fin du jeu ! " + Bcolors.ENDC)
-
-            for result in self.score.combinations.values():
-                sum(result)
-                
+            print("------------------------------")
+            print(Bcolors.OKGREEN + "Votre score total est de : " + str(sum(self.score.combinations.values())) + "points" + Bcolors.ENDC)
+            print("------------------------------")
             exit()
 
 
@@ -419,8 +418,6 @@ class Game():
         if (highest_suite == True):
             if (self.score.combinations["highest_suite"] == None):
                 possibilities.append('highest_suite')
-            if (self.score.combinations["little_suite"] == None):
-                possibilities.append('little_suite')
 
         little_suite = self.score.little_suite( self.dices.dices )
         if (little_suite == True):
