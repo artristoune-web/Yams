@@ -160,10 +160,11 @@ class Score():
 
         dices_value = self.dices_values_to_array(dices)
 
-        if(dices_value == [1, 2, 3, 4] or dices_value == [2, 3, 4, 5] or dices_value == [3, 4, 5 ,6]):
+        if(dices_value == [1, 2, 3, 4] or dices_value == [2, 3, 4, 5] or dices_value == [3, 4, 5, 6]):
             return True
 
         return False
+
 
     def dices_values_to_array(self, dices):
         dices_value = []
@@ -191,16 +192,27 @@ class Game():
     #Gestion des rounds
     def round(self):
             self.nbRound += 1
-            while self.nbRound < 7:
+            while self.nbRound < 14:
                 print("------------------------------")
                 print(Bcolors.OKCYAN + "Round n° " + str(self.nbRound) + Bcolors.ENDC)
                 print("------------------------------")
                 self.load()
             print(Bcolors.FAIL + "Fin du jeu ! " + Bcolors.ENDC)
-            print("------------------------------")
-            print(Bcolors.OKGREEN + "Votre score total est de : " + str(sum(self.score.combinations.values())) + "points" + Bcolors.ENDC)
-            print("------------------------------")
-            exit()
+
+            #Gestion du bonus de fin de game
+            if (sum(self.score.combinations.values()) >= 63):
+                bonus = 35
+                bonus = bonus + sum(self.score.combinations.values())
+                print("------------------------------")
+                print(Bcolors.OKGREEN + "Votre score total est de : " + str(bonus) + " points" + Bcolors.ENDC)
+                print("------------------------------")
+                exit()
+            
+            if (sum(self.score.combinations.values()) < 63):
+                print("------------------------------")
+                print(Bcolors.OKGREEN + "Votre score total est de : " + str(sum(self.score.combinations.values())) + " points" + Bcolors.ENDC)
+                print("------------------------------")
+                exit()
 
 
     #Commencement de la partie
@@ -225,7 +237,7 @@ class Game():
             print("------------------------------")
             print(Bcolors.FAIL + "Erreur ! Veuillez entrer oui ou non " + Bcolors.ENDC)
             print("------------------------------")
-            return(self.round())
+            response = input(Bcolors.HEADER + "Voulez vous lancer les dés ? " + Bcolors.ENDC)
 
 
     #Déroulé de la partie
@@ -473,7 +485,7 @@ class Game():
             
         elif (choixCombinaison == "chance"):
             self.score.combinations[choixCombinaison] = sum(self.score.dices_values_to_array(self.dices.dices))
-        
+
 
     #Possibilité ou non d'inscire un score si case vide ou non
     def possibilities_set_score(self, choixCombinaison):
