@@ -76,8 +76,8 @@ class Score():
         "brelan" : None,
         "carre" : None,
         "full" : None,
-        "little_suite" : None,
-        "highest_suite" : None,
+        "small_suite" : None,
+        "big_suite" : None,
         "yams" : None,
         "chance" : None
     }
@@ -146,21 +146,25 @@ class Score():
         return False  
 
     #Combinaison : GRANDE SUITE (12345 ou 23456)
-    def highest_suite( self, dices ):
+    def big_suite( self, dices ):
         
-        dices_value = self.dices_values_to_array(dices)
- 
-        if(dices_value == [1, 2, 3, 4, 5] or dices_value == [2, 3, 4, 5, 6]):
+        dices_value = self.dices_values_to_array(dices) 
+
+        dices_value.sort()
+
+        if(dices_value[0] == 1 and dices_value[1] == 2 and dices_value[2] == 3 and dices_value[3] == 4 and dices_value[4] == 5 or dices_value[0] == 2 and dices_value[1] == 3 and dices_value[2] == 4 and dices_value[3] == 5 and dices_value[4] == 6):
             return True
 
         return False
 
     #Combinaison : PETITE SUITE (1234 ou 2345 ou 3456)
-    def little_suite( self, dices ):
+    def small_suite( self, dices ):
 
         dices_value = self.dices_values_to_array(dices)
 
-        if(dices_value == [1, 2, 3, 4] or dices_value == [2, 3, 4, 5] or dices_value == [3, 4, 5, 6]):
+        dices_value.sort() 
+
+        if(dices_value[0] == 1 and dices_value[1] == 2 and dices_value[2] == 3 and dices_value[3] == 4 or dices_value[0] == 2 and dices_value[1] == 3 and dices_value[2] == 4 and dices_value[3] == 5 or dices_value[0] == 3 and dices_value[1] == 4 and dices_value[2] == 5 and dices_value[3] == 6):
             return True
 
         return False
@@ -171,6 +175,7 @@ class Score():
         for i in range(1, 6):
             dices_value.append(dices[i].value)
         return dices_value
+    
 
 # Game /
 class Game():
@@ -183,7 +188,7 @@ class Game():
     def game_start(self):
         print("------------------------------")
         print("------------------------------")
-        print(Bcolors.WARNING + "     Le *Yams* commence !     " + Bcolors.ENDC)
+        print(Bcolors.FAIL + "     Le *Yams* commence !     " + Bcolors.ENDC)
         print("------------------------------")
         self.round()
 
@@ -194,21 +199,23 @@ class Game():
             self.nbRound += 1
             while self.nbRound < 14:
                 print("------------------------------")
-                print(Bcolors.OKCYAN + "Round n° " + str(self.nbRound) + Bcolors.ENDC)
+                print(Bcolors.WARNING + "Round n° " + str(self.nbRound) + ' sur 14' + Bcolors.ENDC)
                 print("------------------------------")
                 self.load()
             print(Bcolors.FAIL + "Fin du jeu ! " + Bcolors.ENDC)
 
             #Gestion du bonus de fin de game
-            if (sum(self.score.combinations.values()) >= 63):
+            if(self.score.combinations.get("as") + self.score.combinations.get("two") + self.score.combinations.get("three") + self.score.combinations.get("four") + self.score.combinations.get("five") + self.score.combinations.get("six") >= 63):
                 bonus = 35
                 bonus = bonus + sum(self.score.combinations.values())
+                print("------------------------------")
+                print(Bcolors.OKBLUE + "BONUS ! 35 points de plus pour avoir dépasser 63 points pour les combinaisons : as, two, three, four, five et six ! Bien joué." + Bcolors.ENDC)
                 print("------------------------------")
                 print(Bcolors.OKGREEN + "Votre score total est de : " + str(bonus) + " points" + Bcolors.ENDC)
                 print("------------------------------")
                 exit()
             
-            if (sum(self.score.combinations.values()) < 63):
+            elif (self.score.combinations.get("as") + self.score.combinations.get("two") + self.score.combinations.get("three") + self.score.combinations.get("four") + self.score.combinations.get("five") + self.score.combinations.get("six") < 63):
                 print("------------------------------")
                 print(Bcolors.OKGREEN + "Votre score total est de : " + str(sum(self.score.combinations.values())) + " points" + Bcolors.ENDC)
                 print("------------------------------")
@@ -247,7 +254,7 @@ class Game():
         if "non" in response:
             print("------------------------------")
             possibilities = self.__get_possibilities()
-            self.show_possibilities(possibilities)
+            self.show_possibilities_combinations(self, possibilities)
             self.show_combinations(self.score.combinations)
             print("------------------------------")
             choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -270,7 +277,7 @@ class Game():
             if "non" in response:
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities(possibilities)
+                self.show_possibilities_combinations(self, possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -288,7 +295,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities(possibilities)
+                self.show_possibilities_combinations(self, possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -301,7 +308,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities(possibilities)
+                self.show_possibilities_combinations(self, possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -320,7 +327,7 @@ class Game():
             if "non" in response:
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities(possibilities)
+                self.show_possibilities_combinations(self, possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -339,7 +346,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities(possibilities)
+                self.show_possibilities_combinations(self, possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -352,13 +359,12 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities(possibilities)
+                self.show_possibilities_combinations(self, possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
                 self.possibilities_set_score(choixCombinaison)
                 print(Bcolors.BOLD +"\nVotre score a bien été enregistré !\n" + Bcolors.ENDC)
-                print("------------------------------")
                 print("------------------------------")
                 self.round()
 
@@ -369,17 +375,17 @@ class Game():
 
 
     #Présenter les différentes possibilités
-    def show_possibilities(self, possibilities):
-        print('\nPossibilitées possibles : ' + str(possibilities) + '\n')
+    def show_possibilities_combinations(self, possibilities):
+        print('\nCombinaisons possibles : ' + str(possibilities) + '\n')
 
     #Présenter les différentes combinaisons possibles
     def show_combinations(self, combinations):
-        for line in combinations:
+        for table in combinations:
             print ('------------------------------')
-            if (combinations[line] == None):
-                print(Bcolors.OKGREEN + '|' + line + '|   ' + Bcolors.ENDC)
+            if (combinations[table] == None):
+                print(Bcolors.OKBLUE + table + Bcolors.ENDC)
             else:
-                print(Bcolors.WARNING + '|' + line + '| ' + str(combinations[line]) + Bcolors.ENDC)
+                print(Bcolors.OKGREEN + table + '  ==>  ' + str(combinations[table]) + Bcolors.ENDC)
 
     #Gestion des possibilités pour les combinaisons
     def __get_possibilities(self):
@@ -426,15 +432,15 @@ class Game():
             if (self.score.combinations["full"] == None):
                 possibilities.append('full')
 
-        highest_suite = self.score.highest_suite( self.dices.dices )
-        if (highest_suite == True):
-            if (self.score.combinations["highest_suite"] == None):
-                possibilities.append('highest_suite')
+        big_suite = self.score.big_suite( self.dices.dices )
+        if (big_suite == True):
+            if (self.score.combinations["big_suite"] == None):
+                possibilities.append('big_suite')
 
-        little_suite = self.score.little_suite( self.dices.dices )
-        if (little_suite == True):
-            if (self.score.combinations["little_suite"] == None):
-                possibilities.append('little_suite')
+        small_suite = self.score.small_suite( self.dices.dices )
+        if (small_suite == True):
+            if (self.score.combinations["small_suite"] == None):
+                possibilities.append('small_suite')
         
         return possibilities
 
@@ -474,10 +480,10 @@ class Game():
         elif (choixCombinaison == "full"):
             self.score.combinations[choixCombinaison] = 25
 
-        elif (choixCombinaison == "little_suite"):
+        elif (choixCombinaison == "small_suite"):
             self.score.combinations[choixCombinaison] = 30
 
-        elif (choixCombinaison == "highest_suite"):
+        elif (choixCombinaison == "big_suite"):
             self.score.combinations[choixCombinaison] = 40
 
         elif (choixCombinaison == "yams"):
