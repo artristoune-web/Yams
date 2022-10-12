@@ -169,7 +169,6 @@ class Score():
 
         return False
 
-
     def dices_values_to_array(self, dices):
         dices_value = []
         for i in range(1, 6):
@@ -197,9 +196,9 @@ class Game():
     #Gestion des rounds
     def round(self):
             self.nbRound += 1
-            while self.nbRound < 14:
+            while self.nbRound < 13:
                 print("------------------------------")
-                print(Bcolors.WARNING + "Round n° " + str(self.nbRound) + ' sur 14' + Bcolors.ENDC)
+                print(Bcolors.WARNING + "Round n° " + str(self.nbRound) + ' sur 13' + Bcolors.ENDC)
                 print("------------------------------")
                 self.load()
             print(Bcolors.FAIL + "Fin du jeu ! " + Bcolors.ENDC)
@@ -239,7 +238,6 @@ class Game():
             self.game_restart()
             exit()
 
-        
         if response != "oui" or "non":
             print("------------------------------")
             print(Bcolors.FAIL + "Erreur ! Veuillez entrer oui ou non " + Bcolors.ENDC)
@@ -254,7 +252,7 @@ class Game():
         if "non" in response:
             print("------------------------------")
             possibilities = self.__get_possibilities()
-            self.show_possibilities_combinations(self, possibilities)
+            self.show_possibilities(possibilities)
             self.show_combinations(self.score.combinations)
             print("------------------------------")
             choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -277,7 +275,7 @@ class Game():
             if "non" in response:
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities_combinations(self, possibilities)
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -295,7 +293,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities_combinations(self, possibilities)
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -308,7 +306,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities_combinations(self, possibilities)
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -327,7 +325,7 @@ class Game():
             if "non" in response:
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities_combinations(self, possibilities)
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -346,7 +344,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities_combinations(self, possibilities)
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -359,7 +357,7 @@ class Game():
                 print(Bcolors.FAIL + "Vous n'avez plus d'essai" + Bcolors.ENDC)
                 print("------------------------------")
                 possibilities = self.__get_possibilities()
-                self.show_possibilities_combinations(self, possibilities)
+                self.show_possibilities(possibilities)
                 self.show_combinations(self.score.combinations)
                 print("------------------------------")
                 choixCombinaison = input(Bcolors.HEADER + "Quelle combinaison voulez-vous choisir ? ==> " + Bcolors.ENDC)
@@ -375,7 +373,7 @@ class Game():
 
 
     #Présenter les différentes possibilités
-    def show_possibilities_combinations(self, possibilities):
+    def show_possibilities(self, possibilities):
         print('\nCombinaisons possibles : ' + str(possibilities) + '\n')
 
     #Présenter les différentes combinaisons possibles
