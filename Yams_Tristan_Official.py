@@ -1,10 +1,9 @@
-# Jeu du Yams
+#JEU DU YAMS
 
+#Import
 import random
 
 # Personnalisation
-
-
 class Bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -17,8 +16,6 @@ class Bcolors:
     UNDERLINE = '\033[4m'
 
 # Création des dés
-
-
 class Dice():
 
     nb_face = 6
@@ -37,7 +34,6 @@ class Dice():
     # Inscription de la valeur
     def set_value(self, value):
         self.value = value
-
 
 # Lancement des dés
 class Dices():
@@ -64,12 +60,9 @@ class Dices():
             self.dices[int(i)].roll()
         print(d)
 
-
 d = Dices()
 
 # Score /
-
-
 class Score():
 
     # Liste des combinaisons
@@ -170,13 +163,15 @@ class Score():
 
         return False
 
-
 # Game /
 class Game():
 
-    # Récupération de la classe des dés et du score
-    dices = Dices()
-    score = Score()
+    #Initiation des classes
+    def __init__(self):
+        self.dices = Dices()
+        self.score = Score()
+        self.game = self.game_start()
+
 
     # Début de la partie
     def game_start(self):
@@ -558,7 +553,4 @@ class Game():
             print("------------------------------")
             self.game_restart()
 
-
-g = Game()
-s = Score()
-g.game_start()
+Game()
