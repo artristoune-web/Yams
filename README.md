@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <h1 align="center">Yams</h1>
 <div align="center">
-  <img src="yams.png" alt="Logo" width="80" height="80">
+  <img src="yams.png" alt="Logo" width="200" height="100">
 </div>
 
 # Présentation du projet
