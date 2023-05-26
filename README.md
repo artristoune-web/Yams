@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <h1 align="center">Yams</h1>
 <div align="center">
-  <img src="src/assets/blogger.png" alt="Logo" width="80" height="80">
+  <img src="yams.png" alt="Logo" width="80" height="80">
 </div>
 
 # Présentation du projet
